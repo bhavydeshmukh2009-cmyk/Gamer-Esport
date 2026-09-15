@@ -1,50 +1,36 @@
-name: Build GAMER eSPORTS APKs
+name: GAMER eSPORTS APK Build
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 jobs:
   build:
     runs-on: ubuntu-24.04
 
     steps:
-
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-
-      - name: Setup Java 17
+      - name: Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-
-      - name: Configure Android SDK
+      - name: Android SDK
         run: |
-          echo "ANDROID_HOME=/usr/local/lib/android/sdk" >> $GITHUB_ENV
-          echo "ANDROID_SDK_ROOT=/usr/local/lib/android/sdk" >> $GITHUB_ENV
-          echo "/usr/local/lib/android/sdk/platform-tools" >> $GITHUB_PATH
-          echo "/usr/local/lib/android/sdk/build-tools/35.0.0" >> $GITHUB_PATH
+          echo "ANDROID_HOME=/usr/local/lib/android/sdk" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=/usr/local/lib/android/sdk" >> "$GITHUB_ENV"
 
-
-      - name: Check Android SDK
+      - name: Check SDK
         run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          ls -la "$ANDROID_HOME"
-
           test -d "$ANDROID_HOME/platforms/android-35"
           test -d "$ANDROID_HOME/build-tools/35.0.0"
-
           echo "Android SDK OK"
 
-
-      - name: Create Android project
+      - name: Create project
+        shell: bash
         run: |
-
           mkdir -p UserApp/app/src/main/java/com/gameresports/user
           mkdir -p UserApp/app/src/main/res/values
           mkdir -p UserApp/app/src/main/assets
@@ -53,15 +39,10 @@ jobs:
           mkdir -p AdminApp/app/src/main/res/values
           mkdir -p AdminApp/app/src/main/assets
 
+          cp "GAMER_eSPORTS_USER_PANEL_COIN_DEBIT_FIXED-1.html" "UserApp/app/src/main/assets/index.html"
+          cp "GAMER_eSPORTS_ADMIN_PANEL_CATEGORY_DELETE_FINAL_v2.html" "AdminApp/app/src/main/assets/index.html"
 
-          cp GAMER_eSPORTS_USER_PANEL_COIN_DEBIT_FIXED-1.html \
-             UserApp/app/src/main/assets/index.html
-
-          cp GAMER_eSPORTS_ADMIN_PANEL_CATEGORY_DELETE_FINAL_v2.html \
-             AdminApp/app/src/main/assets/index.html
-
-
-          cat > settings.gradle.kts <<'EOF'
+          cat > settings.gradle <<'EOF'
           pluginManagement {
               repositories {
                   google()
@@ -79,34 +60,195 @@ jobs:
           }
 
           rootProject.name = "GAMER_eSPORTS"
-
-          include(":UserApp")
-          include(":AdminApp")
+          include ":UserApp", ":AdminApp"
           EOF
 
-
-          cat > build.gradle.kts <<'EOF'
+          cat > build.gradle <<'EOF'
           plugins {
-              id("com.android.application") version "8.7.3" apply false
+              id 'com.android.application' version '8.7.3' apply false
           }
           EOF
-
 
           cat > gradle.properties <<'EOF'
           android.useAndroidX=true
           org.gradle.jvmargs=-Xmx2048m
           EOF
 
-
-          cat > UserApp/build.gradle.kts <<'EOF'
+          cat > UserApp/build.gradle <<'EOF'
           plugins {
-              id("com.android.application")
+              id 'com.android.application'
           }
 
           android {
-              namespace = "com.gameresports.user"
-              compileSdk = 35
+              namespace 'com.gameresports.user'
+              compileSdk 35
 
+              defaultConfig {
+                  applicationId 'com.gameresports.user'
+                  minSdk 23
+                  targetSdk 35
+                  versionCode 1
+                  versionName '1.0'
+              }
+          }
+
+          dependencies {
+              implementation 'androidx.core:core:1.15.0'
+              implementation 'androidx.appcompat:appcompat:1.7.0'
+              implementation 'androidx.webkit:webkit:1.12.1'
+          }
+          EOF
+
+          cat > AdminApp/build.gradle <<'EOF'
+          plugins {
+              id 'com.android.application'
+          }
+
+          android {
+              namespace 'com.gameresports.admin'
+              compileSdk 35
+
+              defaultConfig {
+                  applicationId 'com.gameresports.admin'
+                  minSdk 23
+                  targetSdk 35
+                  versionCode 1
+                  versionName '1.0'
+              }
+          }
+
+          dependencies {
+              implementation 'androidx.core:core:1.15.0'
+              implementation 'androidx.appcompat:appcompat:1.7.0'
+              implementation 'androidx.webkit:webkit:1.12.1'
+          }
+          EOF
+
+          cat > UserApp/app/src/main/java/com/gameresports/user/MainActivity.java <<'EOF'
+          package com.gameresports.user;
+
+          import android.annotation.SuppressLint;
+          import android.os.Bundle;
+          import android.webkit.WebChromeClient;
+          import android.webkit.WebView;
+          import android.webkit.WebViewClient;
+          import androidx.appcompat.app.AppCompatActivity;
+
+          public class MainActivity extends AppCompatActivity {
+              WebView webView;
+
+              @SuppressLint("SetJavaScriptEnabled")
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  webView = new WebView(this);
+                  setContentView(webView);
+
+                  webView.getSettings().setJavaScriptEnabled(true);
+                  webView.getSettings().setDomStorageEnabled(true);
+                  webView.getSettings().setDatabaseEnabled(true);
+                  webView.getSettings().setAllowFileAccess(true);
+
+                  webView.setWebViewClient(new WebViewClient());
+                  webView.setWebChromeClient(new WebChromeClient());
+                  webView.loadUrl("file:///android_asset/index.html");
+              }
+
+              @Override
+              public void onBackPressed() {
+                  if (webView.canGoBack()) {
+                      webView.goBack();
+                  } else {
+                      super.onBackPressed();
+                  }
+              }
+          }
+          EOF
+
+          cp UserApp/app/src/main/java/com/gameresports/user/MainActivity.java AdminApp/app/src/main/java/com/gameresports/admin/MainActivity.java
+
+          sed -i 's/package com.gameresports.user;/package com.gameresports.admin;/' AdminApp/app/src/main/java/com/gameresports/admin/MainActivity.java
+
+          cat > UserApp/app/src/main/res/values/styles.xml <<'EOF'
+          <resources>
+              <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+                  <item name="android:statusBarColor">#000000</item>
+                  <item name="android:navigationBarColor">#000000</item>
+                  <item name="android:windowLightStatusBar">false</item>
+              </style>
+          </resources>
+          EOF
+
+          cp UserApp/app/src/main/res/values/styles.xml AdminApp/app/src/main/res/values/styles.xml
+
+          cat > UserApp/app/src/main/AndroidManifest.xml <<'EOF'
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <uses-permission android:name="android.permission.INTERNET"/>
+
+              <application
+                  android:theme="@style/AppTheme"
+                  android:label="GAMER eSPORTS"
+                  android:usesCleartextTraffic="true">
+
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true">
+
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN"/>
+                          <category android:name="android.intent.category.LAUNCHER"/>
+                      </intent-filter>
+
+                  </activity>
+              </application>
+          </manifest>
+          EOF
+
+          cat > AdminApp/app/src/main/AndroidManifest.xml <<'EOF'
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <uses-permission android:name="android.permission.INTERNET"/>
+
+              <application
+                  android:theme="@style/AppTheme"
+                  android:label="GAMER eSPORTS Admin"
+                  android:usesCleartextTraffic="true">
+
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true">
+
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN"/>
+                          <category android:name="android.intent.category.LAUNCHER"/>
+                      </intent-filter>
+
+                  </activity>
+              </application>
+          </manifest>
+          EOF
+
+      - name: Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+
+      - name: Build User APK
+        run: gradle :UserApp:assembleDebug --no-daemon
+
+      - name: Build Admin APK
+        run: gradle :AdminApp:assembleDebug --no-daemon
+
+      - name: Upload User APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: GAMER-eSPORTS-USER-APK
+          path: UserApp/build/outputs/apk/debug/*.apk
+
+      - name: Upload Admin APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: GAMER-eSPORTS-ADMIN-APK
+          path: AdminApp/build/outputs/apk/debug/*.apk
               defaultConfig {
                   applicationId = "com.gameresports.user"
                   minSdk = 23
