@@ -1,0 +1,251 @@
+name: Build GAMER eSPORTS APKs
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Android
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK
+        run: |
+          sdkmanager "platform-tools" \
+            "platforms;android-35" \
+            "build-tools;35.0.0"
+
+      - name: Create Android project
+        run: |
+          mkdir -p UserApp/app/src/main/java/com/gameresports/user
+          mkdir -p UserApp/app/src/main/res/values
+          mkdir -p UserApp/app/src/main/assets
+
+          mkdir -p AdminApp/app/src/main/java/com/gameresports/admin
+          mkdir -p AdminApp/app/src/main/res/values
+          mkdir -p AdminApp/app/src/main/assets
+
+          cp GAMER_eSPORTS_USER_PANEL_COIN_DEBIT_FIXED-1.html \
+            UserApp/app/src/main/assets/index.html
+
+          cp GAMER_eSPORTS_ADMIN_PANEL_CATEGORY_DELETE_FINAL_v2.html \
+            AdminApp/app/src/main/assets/index.html
+
+          cat > settings.gradle.kts <<'EOF'
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
+
+          rootProject.name = "GAMER_eSPORTS"
+          include(":UserApp", ":AdminApp")
+          EOF
+
+          cat > build.gradle.kts <<'EOF'
+          plugins {
+              id("com.android.application") version "8.7.3" apply false
+              id("org.jetbrains.kotlin.android") version "2.0.21" apply false
+          }
+          EOF
+
+          cat > gradle.properties <<'EOF'
+          android.useAndroidX=true
+          kotlin.code.style=official
+          org.gradle.jvmargs=-Xmx2048m
+          EOF
+
+          cat > UserApp/build.gradle.kts <<'EOF'
+          plugins {
+              id("com.android.application")
+              id("org.jetbrains.kotlin.android")
+          }
+
+          android {
+              namespace = "com.gameresports.user"
+              compileSdk = 35
+
+              defaultConfig {
+                  applicationId = "com.gameresports.user"
+                  minSdk = 23
+                  targetSdk = 35
+                  versionCode = 1
+                  versionName = "1.0"
+              }
+          }
+
+          dependencies {
+              implementation("androidx.core:core-ktx:1.15.0")
+              implementation("androidx.appcompat:appcompat:1.7.0")
+              implementation("androidx.webkit:webkit:1.12.1")
+          }
+          EOF
+
+          cat > AdminApp/build.gradle.kts <<'EOF'
+          plugins {
+              id("com.android.application")
+              id("org.jetbrains.kotlin.android")
+          }
+
+          android {
+              namespace = "com.gameresports.admin"
+              compileSdk = 35
+
+              defaultConfig {
+                  applicationId = "com.gameresports.admin"
+                  minSdk = 23
+                  targetSdk = 35
+                  versionCode = 1
+                  versionName = "1.0"
+              }
+          }
+
+          dependencies {
+              implementation("androidx.core:core-ktx:1.15.0")
+              implementation("androidx.appcompat:appcompat:1.7.0")
+              implementation("androidx.webkit:webkit:1.12.1")
+          }
+          EOF
+
+          cat > UserApp/src/main/java/com/gameresports/user/MainActivity.kt <<'EOF'
+          package com.gameresports.user
+
+          import android.annotation.SuppressLint
+          import android.os.Bundle
+          import android.webkit.WebChromeClient
+          import android.webkit.WebView
+          import android.webkit.WebViewClient
+          import androidx.appcompat.app.AppCompatActivity
+
+          class MainActivity : AppCompatActivity() {
+
+              private lateinit var webView: WebView
+
+              @SuppressLint("SetJavaScriptEnabled")
+              override fun onCreate(savedInstanceState: Bundle?) {
+                  super.onCreate(savedInstanceState)
+
+                  webView = WebView(this)
+                  setContentView(webView)
+
+                  webView.settings.javaScriptEnabled = true
+                  webView.settings.domStorageEnabled = true
+                  webView.settings.databaseEnabled = true
+                  webView.settings.allowFileAccess = true
+                  webView.settings.allowContentAccess = true
+
+                  webView.webViewClient = WebViewClient()
+                  webView.webChromeClient = WebChromeClient()
+
+                  webView.loadUrl("file:///android_asset/index.html")
+              }
+
+              @Deprecated("Deprecated in Android SDK")
+              override fun onBackPressed() {
+                  if (webView.canGoBack()) {
+                      webView.goBack()
+                  } else {
+                      super.onBackPressed()
+                  }
+              }
+          }
+          EOF
+
+          cp UserApp/src/main/java/com/gameresports/user/MainActivity.kt \
+             AdminApp/src/main/java/com/gameresports/admin/MainActivity.kt
+
+          sed -i 's/package com.gameresports.user/package com.gameresports.admin/' \
+             AdminApp/src/main/java/com/gameresports/admin/MainActivity.kt
+
+          cat > UserApp/src/main/res/values/styles.xml <<'EOF'
+          <resources>
+              <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+                  <item name="android:statusBarColor">#000000</item>
+                  <item name="android:navigationBarColor">#000000</item>
+                  <item name="android:windowLightStatusBar">false</item>
+              </style>
+          </resources>
+          EOF
+
+          cp UserApp/src/main/res/values/styles.xml \
+             AdminApp/src/main/res/values/styles.xml
+
+          cat > UserApp/src/main/AndroidManifest.xml <<'EOF'
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+              <uses-permission android:name="android.permission.INTERNET"/>
+
+              <application
+                  android:theme="@style/AppTheme"
+                  android:label="GAMER eSPORTS"
+                  android:usesCleartextTraffic="true"
+                  android:allowBackup="false">
+
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true">
+
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN"/>
+                          <category android:name="android.intent.category.LAUNCHER"/>
+                      </intent-filter>
+
+                  </activity>
+
+              </application>
+
+          </manifest>
+          EOF
+
+          cp UserApp/src/main/AndroidManifest.xml \
+             AdminApp/src/main/AndroidManifest.xml
+
+          sed -i 's/GAMER eSPORTS/GAMER eSPORTS Admin/' \
+             AdminApp/src/main/AndroidManifest.xml
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+
+      - name: Build User APK
+        run: gradle :UserApp:assembleDebug --no-daemon
+
+      - name: Build Admin APK
+        run: gradle :AdminApp:assembleDebug --no-daemon
+
+      - name: Upload User APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: GAMER-eSPORTS-USER-APK
+          path: UserApp/build/outputs/apk/debug/*.apk
+
+      - name: Upload Admin APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: GAMER-eSPORTS-ADMIN-APK
+          path: AdminApp/build/outputs/apk/debug/*.apk
