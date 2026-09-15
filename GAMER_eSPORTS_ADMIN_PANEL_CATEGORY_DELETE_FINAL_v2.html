@@ -1,0 +1,790 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GAMER eSPORTS - Admin Panel</title><style>
+:root{--bg:#f7f7f7;--card:#ffffff;--card2:#fafafa;--line:#e5e5e5;--text:#111111;--muted:#707070;--accent:#111111;--green:#16835a;--red:#c73743;--gold:#8a6500}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;scroll-behavior:smooth}
+body{min-height:100vh}.app{min-height:100vh;padding-bottom:82px}
+.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:15px 22px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;gap:12px;align-items:center}.logo{width:54px;height:54px;border-radius:16px;background:#111;color:#fff;display:grid;place-items:center;font-weight:900;font-size:19px}.brand b{font-size:20px}.brand small{display:block;color:#697277;letter-spacing:3px;margin-top:3px}
+.iconbtn,.btn{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:16px;padding:13px 17px;font-weight:800;cursor:pointer}.iconbtn{font-size:20px;min-width:52px}.btn.primary{background:#fff;color:#090b0c;border-color:#fff}.btn.danger{color:#ff7880}.btn.success{color:#52e0a0}.btn:active{transform:scale(.98)}
+main{max-width:1180px;margin:auto;padding:24px}.hero{display:flex;justify-content:space-between;gap:16px;align-items:end;margin:10px 0 22px}.hero h1{font-size:38px;margin:0 0 5px}.hero p{color:var(--muted);margin:0}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat{background:#fff;border:1px solid var(--line);box-shadow:0 6px 22px rgba(0,0,0,.04);border-radius:20px;padding:18px}.stat span{color:var(--muted);font-size:13px}.stat strong{display:block;font-size:28px;margin-top:8px}
+.card{background:#fff;border:1px solid var(--line);box-shadow:0 6px 24px rgba(0,0,0,.045);border-radius:24px;padding:22px;margin:18px 0}.card h2{margin:0 0 18px;font-size:25px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}.search{flex:1;min-width:220px}.input,select,textarea{width:100%;background:#fafafa;border:1px solid #dcdcdc;color:#111;border-radius:16px;padding:14px 16px;font:inherit;outline:none}.input:focus,select:focus,textarea:focus{border-color:#707b82}label{display:block;color:#a4adb2;font-size:14px;margin:12px 0 7px}.formgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.full{grid-column:1/-1}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:18px}.table{width:100%;border-collapse:collapse;min-width:760px}.table th,.table td{padding:14px;border-bottom:1px solid #eeeeee;text-align:left}.table th{color:#7f898f;font-size:12px;text-transform:uppercase}.table tr:last-child td{border-bottom:0}.badge{display:inline-flex;padding:7px 10px;border-radius:999px;border:1px solid #2b664d;color:var(--green);font-size:12px;font-weight:800}.badge.gray{border-color:#454c50;color:#aeb5b8}.badge.red{border-color:#71363b;color:#ff8188}
+.tabs{display:flex;gap:10px;overflow:auto;margin-bottom:16px}.tab{white-space:nowrap}.tab.active{background:#fff;color:#111;border-color:#fff}
+.bottom{position:fixed;bottom:0;left:0;right:0;height:76px;background:rgba(255,255,255,.97);backdrop-filter:blur(14px);border-top:1px solid var(--line);z-index:30;display:flex;justify-content:center}.nav{max-width:700px;width:100%;display:grid;grid-template-columns:repeat(5,1fr)}.nav button{border:0;background:transparent;color:#777;font-weight:700}.nav button.active{color:#111;background:#f0f0f0;border-radius:20px;margin:8px}.nav i{display:block;font-style:normal;font-size:20px;margin-bottom:3px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.38);display:none;align-items:flex-end;justify-content:center;z-index:50}.modal.open{display:flex}.sheet{width:min(900px,100%);max-height:92vh;overflow:auto;background:#fff;border:1px solid #30383d;border-radius:26px 26px 0 0;padding:22px}.sheethead{display:flex;justify-content:space-between;align-items:center}.sheethead h2{margin:0}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.grow{flex:1}.notice{padding:13px 15px;border:1px solid #e4e0d7;background:#faf8f2;color:#6f5b32;border-radius:15px;margin:12px 0}
+.resultrow{display:grid;grid-template-columns:55px 1fr 145px 145px;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid #eeeeee}.resultrow:last-child{border-bottom:0}.rank{font-weight:900;color:#ffcf80}.playername{font-weight:700}.playerid{color:#7f898f;font-size:12px}.prizeinput{max-width:150px}
+.drawer{position:fixed;right:0;top:0;bottom:0;width:min(390px,92vw);background:#fff;border-left:1px solid var(--line);z-index:45;transform:translateX(100%);transition:.25s;padding:22px;overflow:auto}.drawer.open{transform:translateX(0)}
+.hidden{display:none!important}.muted{color:var(--muted)}.center{text-align:center}.empty{padding:35px;color:#6f797e;text-align:center}.toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:#111;color:#fff;padding:12px 17px;border-radius:14px;font-weight:800;z-index:100;display:none}.toast.show{display:block;animation:fade 2.2s forwards}@keyframes fade{0%,70%{opacity:1}100%{opacity:0}}
+@media(max-width:800px){main{padding:16px}.hero{align-items:flex-start}.hero h1{font-size:30px}.grid{grid-template-columns:repeat(2,1fr)}.formgrid{grid-template-columns:1fr}.resultrow{grid-template-columns:42px 1fr 105px 105px}.resultrow .btn{padding:10px}.top{padding:14px 16px}.logo{width:48px;height:48px}.brand b{font-size:17px}}
+
+/* Smooth light theme polish */
+*{transition:background-color .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease,transform .12s ease}
+body{overflow-x:hidden}
+button,input,select,textarea{touch-action:manipulation}
+.btn:hover,.iconbtn:hover{border-color:#bdbdbd;box-shadow:0 5px 16px rgba(0,0,0,.07);transform:translateY(-1px)}
+.btn.primary:hover{background:#222;color:#fff;border-color:#222}
+.input:hover,select:hover,textarea:hover{border-color:#bdbdbd;background:#fff}
+.card,.stat{animation:softIn .28s ease both}
+@keyframes softIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:800px){
+  .card{padding:17px;border-radius:19px}
+  .stat{padding:15px;border-radius:17px}
+  .hero{margin-top:6px}
+  .tablewrap{-webkit-overflow-scrolling:touch}
+  .sheet{border-radius:22px 22px 0 0;padding:17px}
+}
+
+/* Admin control-center polish */
+.controlGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.controlStat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px}
+.controlStat .k{color:#7d858b;font-size:12px;text-transform:uppercase;letter-spacing:.7px}
+.controlStat .v{font-size:24px;font-weight:900;margin-top:6px}
+.request{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:15px 0;border-bottom:1px solid #eee}
+.request:last-child{border-bottom:0}
+.requestTitle{font-weight:850}.requestMeta{font-size:12px;color:#7f898f;margin-top:4px}
+.requestAmount{font-size:18px;font-weight:900}.requestAmount.in{color:#16835a}.requestAmount.out{color:#c73743}
+.pill{display:inline-flex;align-items:center;padding:6px 9px;border-radius:999px;background:#f1f2f4;font-size:11px;font-weight:800}
+.miniActions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.annList{display:grid;gap:10px}.annItem{padding:13px 14px;border:1px solid #e6e6e6;border-radius:14px;background:#fafafa}
+.previewImg{width:100%;height:92px;object-fit:cover;border-radius:14px;border:1px solid #e5e5e5;background:#f2f2f2}
+@media(max-width:800px){
+ .controlGrid{grid-template-columns:1fr}
+ .request{grid-template-columns:1fr}
+ .miniActions{justify-content:flex-start}
+}
+</style></head><body>
+<div class="app">
+<header class="top"><div class="brand"><div class="logo">GE</div><div><b>GAMER eSPORTS</b><small>ADMIN PANEL</small></div></div><button class="iconbtn" onclick="toggleDrawer()">☰</button></header>
+<main>
+<section id="dashboard">
+<div class="hero"><div><h1>Dashboard</h1><p>Complete tournament administration</p></div><button class="btn primary" onclick="openMatch()">＋ Create Match</button></div>
+<div class="grid" id="stats"></div>
+<div class="card"><h2>Recent Matches</h2><div id="recent"></div></div>
+</section>
+
+<section id="autoMatches" class="hidden">
+<div class="hero"><div><h1>Automatic Matches</h1><p>Create matches automatically from your saved template</p></div></div>
+<div class="card">
+<h2>Auto Match Generator</h2>
+<div class="notice">This browser-based version generates matches locally in <b>ge_data_v3</b>. Keep the Admin Panel open for scheduled generation. For true server-side generation while the panel is closed, Firebase/server automation is required.</div>
+<div class="formgrid">
+<div><label>Enable Automatic Matches</label><select id="autoEnabled"><option value="no">OFF</option><option value="yes">ON</option></select></div>
+<div><label>Matches to Generate</label><input id="autoCount" class="input" type="number" min="1" max="50" value="5"></div>
+<div><label>Interval (minutes)</label><input id="autoInterval" class="input" type="number" min="1" value="30"></div>
+<div><label>First Match Time</label><input id="autoStartTime" class="input" type="time" value="10:00"></div>
+<div><label>Category</label><select id="autoCat">
+<option value="Battle Royale">Battle Royale</option>
+<option value="Clash Squad">Clash Squad</option>
+<option value="Lone Wolf">Lone Wolf</option>
+<option value="Custom">Custom</option>
+</select></div>
+<div><label>Match Name Prefix</label><input id="autoName" class="input" value="Auto Battle Royale Match"></div>
+<div><label>Host</label><input id="autoHost" class="input" value="Auto Host"></div>
+<div><label>Entry Fee ₹</label><input id="autoEntry" class="input" type="number" min="0" value="15"></div>
+<div><label>Prize Pool ₹</label><input id="autoPrize" class="input" type="number" min="0" value="100"></div>
+<div><label>Max Players</label><input id="autoMax" class="input" type="number" min="1" value="48"></div>
+</div><br>
+<div class="row">
+<button class="btn primary" onclick="saveAutoSettings()">SAVE AUTO SETTINGS</button>
+<button class="btn" onclick="generateAutoMatches()">GENERATE NOW</button>
+<button class="btn" onclick="stopAutoMatches()">STOP</button>
+</div>
+<div id="autoStatus" class="notice" style="margin-top:12px">Automatic generation is OFF.</div>
+</div>
+</section>
+
+<section id="matches" class="hidden">
+<div class="hero"><div><h1>Match Management</h1><p>Create, host, control status and publish results</p></div><button class="btn primary" onclick="openMatch()">＋ Create</button></div>
+<div class="card"><div class="toolbar"><input class="input search" id="matchSearch" placeholder="⌕  Search match, host or room..." oninput="renderMatches()"><button class="btn tab active" onclick="setMatchFilter('All')">All</button><button class="btn tab" onclick="setMatchFilter('Upcoming')">Upcoming</button><button class="btn tab" onclick="setMatchFilter('Ongoing')">Ongoing</button><button class="btn tab" onclick="setMatchFilter('Completed')">Completed</button></div><div id="matchTable"></div></div>
+</section>
+
+<section id="players" class="hidden">
+<div class="hero"><div><h1>Players</h1><p>Registered player names are used automatically in results</p></div></div>
+<div class="card"><h2>Register Player</h2><div class="formgrid"><div><label>Player Name</label><input id="pname" class="input" placeholder="Rahul FF"></div><div><label>Game ID</label><input id="pgid" class="input" placeholder="FF1001"></div><div><label>Username</label><input id="puser" class="input" placeholder="rahulff"></div></div><br><button class="btn primary" onclick="addPlayer()">＋ Add Player</button></div>
+<div class="card"><h2>Player List</h2><div id="playerTable"></div></div>
+</section>
+
+<section id="wallet" class="hidden">
+<div class="hero"><div><h1>Wallet</h1><p>Add or subtract balance by username</p></div></div>
+<div class="card"><h2>Wallet Update</h2><div class="formgrid"><div><label>Username</label><input id="wuser" class="input" placeholder="rahulff"></div><div><label>Amount ₹</label><input id="wamount" type="number" class="input" placeholder="100"></div><div><label>Action</label><select id="waction"><option value="add">Add Money</option><option value="subtract">Subtract Money</option></select></div><div><label>Note</label><input id="wnote" class="input" placeholder="Manual adjustment"></div></div><br><button class="btn primary" onclick="walletUpdate()">Update Wallet</button></div>
+<div class="card"><h2>Balances</h2><div id="walletTable"></div></div>
+</section>
+
+
+<section id="users" class="hidden">
+ <div class="hero"><div><h1>Users</h1><p>Manage registered GAMER eSPORTS accounts and wallet balances</p></div></div>
+ <div class="card">
+  <div class="toolbar">
+   <input class="input search" id="userSearch" placeholder="⌕ Search name, mobile or username..." oninput="renderUsers()">
+   <button class="btn" onclick="renderUsers()">Refresh</button>
+  </div>
+  <div id="userTable"></div>
+ </div>
+</section>
+
+<section id="requests" class="hidden">
+ <div class="hero"><div><h1>Payment Requests</h1><p>Review deposit and withdrawal requests from the User Panel</p></div></div>
+ <div class="controlGrid">
+  <div class="controlStat"><div class="k">Pending Deposits</div><div class="v" id="pendingDeposits">0</div></div>
+  <div class="controlStat"><div class="k">Pending Withdrawals</div><div class="v" id="pendingWithdrawals">0</div></div>
+ </div>
+ <div class="card"><h2>Deposit Requests</h2><div id="depositRequests"></div></div>
+ <div class="card"><h2>Withdraw Requests</h2><div id="withdrawRequests"></div></div>
+</section>
+
+<section id="staff" class="hidden">
+<div class="hero"><div><h1>Staff</h1><p>Create staff accounts and control their permissions</p></div></div>
+<div class="card"><h2>Add Staff</h2><div class="formgrid"><div><label>Username</label><input id="suser" class="input" placeholder="staff01"></div><div><label>Password</label><input id="spass" type="password" class="input" placeholder="••••••••"></div><div><label>Staff Name</label><input id="sname" class="input" placeholder="Staff Member"></div></div><br><button class="btn primary" onclick="addStaff()">＋ Add Staff</button></div>
+<div class="card"><h2>Staff Accounts</h2><div id="staffTable"></div></div>
+</section>
+
+
+<section id="homeMedia" class="hidden">
+<div class="hero"><div><h1>Home Media</h1><p>Change User Panel slides, game images and featured image</p></div></div>
+<div class="card">
+<h2>🎨 User Panel Home / Images</h2>
+<div class="notice">Images saved here are stored in <b>ge_data_v3</b>. You can paste an image URL or upload an image from your phone.</div>
+<h3 style="margin:20px 0 10px">Hero Slides — up to 3</h3>
+<div class="formgrid">
+<div><label>Slide 1 Image URL</label><input id="slide1Url" class="input" placeholder="https://..."><input id="slide1File" class="input" type="file" accept="image/*" onchange="previewMediaFile(this,'slide1Preview','slide1Url')"><img id="slide1Preview" style="width:100%;height:90px;object-fit:cover;border-radius:14px;margin-top:8px;display:none"></div>
+<div><label>Slide 2 Image URL</label><input id="slide2Url" class="input" placeholder="https://..."><input id="slide2File" class="input" type="file" accept="image/*" onchange="previewMediaFile(this,'slide2Preview','slide2Url')"><img id="slide2Preview" style="width:100%;height:90px;object-fit:cover;border-radius:14px;margin-top:8px;display:none"></div>
+<div><label>Slide 3 Image URL</label><input id="slide3Url" class="input" placeholder="https://..."><input id="slide3File" class="input" type="file" accept="image/*" onchange="previewMediaFile(this,'slide3Preview','slide3Url')"><img id="slide3Preview" style="width:100%;height:90px;object-fit:cover;border-radius:14px;margin-top:8px;display:none"></div>
+</div>
+<h3 id="categoryManager" style="margin:24px 0 10px">Manage Categories</h3>
+<div class="notice">Add your own tournament category and set its image. The new category will appear in the match form and User Panel.</div>
+<div class="formgrid">
+<div><label>Category Name</label><input id="newCategoryName" class="input" placeholder="e.g. Duo Match"></div>
+<div><label>Category Image</label>
+<input id="newCategoryImageUrl" class="input" placeholder="Paste Image URL">
+<input id="newCategoryImageFile" class="input" type="file" accept="image/*" onchange="previewNewCategoryImage(this)">
+<img id="newCategoryImagePreview" style="width:100%;height:120px;object-fit:cover;border-radius:14px;margin-top:8px;display:none">
+</div></div>
+<div class="row" style="margin-top:14px"><button class="btn primary" onclick="addCustomCategory()">ADD CATEGORY</button></div>
+<div id="customCategoryList" style="margin-top:12px"></div>
+<h3 style="margin:24px 0 10px">Category Images</h3>
+<div class="notice">Set a different image for each tournament category. Upload an image or paste an image URL, then press SAVE CATEGORY IMAGES.</div>
+<div class="formgrid">
+<div>
+<label>Battle Royale Image</label>
+<input id="game1Url" class="input" placeholder="Paste Image URL">
+<input id="game1File" class="input" type="file" accept="image/*" onchange="previewCategoryImage(this,'game1Preview','game1Url')">
+<img id="game1Preview" style="width:100%;height:120px;object-fit:cover;border-radius:14px;margin-top:8px;display:none">
+</div>
+<div>
+<label>Clash Squad Image</label>
+<input id="game2Url" class="input" placeholder="Paste Image URL">
+<input id="game2File" class="input" type="file" accept="image/*" onchange="previewCategoryImage(this,'game2Preview','game2Url')">
+<img id="game2Preview" style="width:100%;height:120px;object-fit:cover;border-radius:14px;margin-top:8px;display:none">
+</div>
+<div>
+<label>Lone Wolf Image</label>
+<input id="game3Url" class="input" placeholder="Paste Image URL">
+<input id="game3File" class="input" type="file" accept="image/*" onchange="previewCategoryImage(this,'game3Preview','game3Url')">
+<img id="game3Preview" style="width:100%;height:120px;object-fit:cover;border-radius:14px;margin-top:8px;display:none">
+</div>
+<div>
+<label>Custom Image</label>
+<input id="game4Url" class="input" placeholder="Paste Image URL">
+<input id="game4File" class="input" type="file" accept="image/*" onchange="previewCategoryImage(this,'game4Preview','game4Url')">
+<img id="game4Preview" style="width:100%;height:120px;object-fit:cover;border-radius:14px;margin-top:8px;display:none">
+</div>
+</div>
+<div class="row" style="margin-top:14px">
+<button class="btn primary" onclick="saveCategoryImages()">SAVE CATEGORY IMAGES</button>
+</div>
+<h3 style="margin:24px 0 10px">Featured Tournament Image</h3>
+<div class="formgrid">
+<div><label>Featured Image URL</label><input id="featuredUrl" class="input" placeholder="Image URL"></div>
+<div><label>Upload Featured Image</label><input id="featuredFile" class="input" type="file" accept="image/*" onchange="previewMediaFile(this,'featuredPreview','featuredUrl')"><img id="featuredPreview" style="width:100%;height:90px;object-fit:cover;border-radius:14px;margin-top:8px;display:none"></div>
+</div>
+<br><button class="btn primary" onclick="saveHomeMedia()">SAVE HOME MEDIA</button>
+<button class="btn" onclick="loadHomeMedia()">LOAD SAVED</button>
+</div>
+</section>
+
+<section id="settings" class="hidden">
+<div class="hero"><div><h1>Settings</h1><p>Admin configuration</p></div></div>
+<div class="card"><h2>Payment Gateway</h2><div class="formgrid"><div><label>Gateway</label><select id="gateway"><option>Razorpay</option><option>Cashfree</option><option>PayU</option><option>Manual / UPI</option></select></div><div><label>Mode</label><select id="gmode"><option>Test</option><option>Live</option></select></div><div><label>Key / Merchant ID</label><input id="gkey" class="input" placeholder="Enter gateway key"></div><div><label>Webhook Secret</label><input id="gsecret" class="input" placeholder="Enter webhook secret"></div></div><br><button class="btn primary" onclick="saveGateway()">Save Gateway</button><div class="notice">Gateway settings are stored for the app configuration. Do not put private gateway secrets in a public GitHub Pages HTML file; real payment verification must be done on a secure server.</div></div>
+<div class="card"><h2>Admin Account</h2><p class="muted">Default local demo login: <b>admin</b> / <b>admin123</b></p></div>
+
+ <div class="card">
+  <h2>Support & App Info</h2>
+  <div class="formgrid">
+   <div><label>Telegram</label><input id="telegram" class="input" placeholder="@gameresports_support"></div>
+   <div><label>WhatsApp</label><input id="whatsapp" class="input" placeholder="+91..."></div>
+   <div><label>App Name</label><input id="appName" class="input" value="GAMER ESPORTS"></div>
+   <div><label>Support Message</label><input id="supportMsg" class="input" placeholder="Contact support for help"></div>
+  </div><br>
+  <button class="btn primary" onclick="saveAppSettings()">SAVE APP SETTINGS</button>
+ </div>
+ <div class="card">
+  <h2>Announcements</h2>
+  <div class="formgrid"><div class="full"><label>New Announcement</label><input id="announcementText" class="input" placeholder="🔥 New tournament live now!"></div></div><br>
+  <button class="btn primary" onclick="addAnnouncement()">＋ PUBLISH ANNOUNCEMENT</button>
+  <div id="announcementList" style="margin-top:15px"></div>
+ </div>
+
+</section>
+</main>
+<nav class="bottom"><div class="nav">
+<button class="active" data-sec="dashboard" onclick="nav('dashboard')"><i>⌂</i>Home</button>
+<button data-sec="matches" onclick="nav('matches')"><i>▣</i>Matches</button><button data-sec="autoMatches" onclick="nav('autoMatches')"><i>⟳</i>Auto Matches</button>
+<button data-sec="players" onclick="nav('players')"><i>♙</i>Players</button>
+<button data-sec="wallet" onclick="nav('wallet')"><i>₹</i>Wallet</button>
+
+</div></nav></div>
+<div id="drawer" class="drawer">
+ <div class="sheethead"><h2>Admin Menu</h2><button class="iconbtn" onclick="toggleDrawer()">×</button></div><hr><br>
+ <button class="btn" style="width:100%;margin:5px 0" onclick="toggleDrawer();nav('users')">👥 Users</button>
+ <button class="btn" style="width:100%;margin:5px 0" onclick="toggleDrawer();nav('requests')">💳 Payment Requests</button>
+ <button class="btn" style="width:100%;margin:5px 0" onclick="toggleDrawer();nav('homeMedia')">🎨 User Panel Home / Images</button>
+ <button class="btn" style="width:100%;margin:5px 0" onclick="toggleDrawer();nav('staff')">♟ Staff Management</button>
+ <button class="btn" style="width:100%;margin:5px 0" onclick="toggleDrawer();nav('settings')">⚙ Settings / Support / Announcements</button>
+ <button class="btn danger" style="width:100%;margin:5px 0" onclick="logout()">Logout</button>
+</div>
+
+<div id="matchModal" class="modal"><div class="sheet"><div class="sheethead"><h2 id="matchTitle">Create Match</h2><button class="iconbtn" onclick="closeModal('matchModal')" title="Cancel">×</button></div>
+<div class="formgrid">
+<div><label>Match Number</label><input id="mno" class="input"></div><div><label>Category</label><select id="mcat">
+<option value="Battle Royale">Battle Royale</option>
+<option value="Clash Squad">Clash Squad</option>
+<option value="Lone Wolf">Lone Wolf</option>
+<option value="Custom">Custom</option>
+</select><button class="btn" type="button" style="margin-top:8px" onclick="closeModal('matchModal');nav('homeMedia');setTimeout(function(){var e=document.getElementById('categoryManager');if(e)e.scrollIntoView({behavior:'smooth',block:'start'});},80)">＋ Manage Categories & Images</button></div>
+<div><label>Match Name</label><input id="mname" class="input" placeholder="Mega Free Fire Match"></div><div><label>Host</label><input id="mhost" class="input" placeholder="Host 01"></div>
+<div><label>Entry Fee ₹</label><input id="mentry" type="number" class="input" value="15"></div><div><label>Prize Pool ₹</label><input id="mprize" type="number" class="input" value="100"></div>
+<div><label>Max Players</label><input id="mmax" type="number" class="input" value="48"></div><div><label>Status</label><select id="mstatus"><option>Upcoming</option><option>Ongoing</option><option>Completed</option></select></div>
+<div><label>Room ID</label><input id="mroom" class="input" placeholder="Enter Room ID"></div><div><label>Room Password</label><input id="mpass" class="input" placeholder="11"></div>
+<div class="full"><label>Match Image URL (optional)</label><input id="mbanner" class="input" placeholder="Leave blank to automatically use the selected category image"></div>
+<div class="full"><label>Registered Players (one player ID per line — registration sequence is preserved)</label><textarea id="mplayers" rows="7" placeholder="FF1001&#10;FF1002&#10;FF1003"></textarea></div>
+<div class="full"><label>Result Notes</label><textarea id="mnotes" rows="4"></textarea></div></div><br>
+<div class="row"><button class="btn primary" onclick="saveMatch()">SAVE MATCH</button><button class="btn" onclick="closeModal('matchModal')">CANCEL</button></div></div></div>
+
+<div id="deleteMatchModal" class="modal">
+<div class="sheet" style="max-width:430px">
+  <div class="sheethead">
+    <h2>Delete Match?</h2>
+    <button class="iconbtn" onclick="closeModal('deleteMatchModal')">×</button>
+  </div>
+  <div class="card" style="margin:12px 0">
+    <b id="deleteMatchName">Match</b>
+    <div class="muted" id="deleteMatchInfo" style="margin-top:6px">This match will be removed.</div>
+  </div>
+  <div class="notice">This will remove the match from the Admin Panel and its synced tournament entry from the User Panel.</div>
+  <div class="row" style="margin-top:14px">
+    <button class="btn" onclick="closeModal('deleteMatchModal')">CANCEL</button>
+    <button class="btn danger" onclick="confirmDeleteMatch()">DELETE MATCH</button>
+  </div>
+</div>
+</div>
+<div id="resultModal" class="modal"><div class="sheet"><div class="sheethead"><h2 id="resultTitle">Result</h2><button class="iconbtn" onclick="closeModal('resultModal')">×</button></div><div id="resultInfo"></div><div class="toolbar"><button class="btn" onclick="setAllRefunds()">↩ REFUND ENTRY FEE TO ALL</button><button class="btn" onclick="clearAllRefunds()">CLEAR REFUNDS</button></div><div class="row" style="padding:8px 0;color:#7f898f;font-size:12px;text-transform:uppercase"><span>Rank</span><span>Registered Player</span><span>Prize ₹</span><span>Refund ₹</span></div><div id="resultRows"></div><div class="notice">Players are loaded from this match's registration list in exact sequence. You can give prizes to any number of players and refund the entry fee separately. Refund amount is credited to the player's wallet.</div><div class="row"><button class="btn primary" onclick="publishResult()">PUBLISH RESULT</button><button class="btn" onclick="closeModal('resultModal')">CANCEL</button></div></div></div>
+<div id="toast" class="toast"></div>
+<script>
+const K='ge_data_v3';
+// Direct-open Chrome safe media storage. Images are kept as small JPEG data URLs
+// so Admin and User Panel can share them through the same localStorage database.
+const MEDIA_MAX=640, MEDIA_QUALITY=.58;
+function seed(){let d=null;try{d=JSON.parse(localStorage.getItem(K)||'null')}catch(e){d=null}if(!d){d={matches:[{id:'m1',no:'10101',cat:'Battle Royale',name:'Mega Free Fire Match',host:'Host 01',entry:15,prize:20000,max:48,room:'24353444',pass:'11',status:'Ongoing',players:['FF1001','FF1002','FF1003'],notes:'',results:[]}],players:[{id:'FF1001',name:'Rahul FF',username:'rahulff',balance:0},{id:'FF1002',name:'Aman Pro',username:'amanpro',balance:0},{id:'FF1003',name:'Rohit Gamer',username:'rohitgamer',balance:0}],staff:[],gateway:{gateway:'Razorpay',mode:'Test',key:'',secret:''}};try{localStorage.setItem(K,JSON.stringify(d))}catch(e){}}return d||{matches:[],players:[],staff:[],gateway:{gateway:'Razorpay',mode:'Test'}}}
+let data=seed(), editId=null,resultId=null,filter='All';
+function isDataImage(v){return typeof v==='string'&&v.indexOf('data:image/')===0}
+function cleanLegacyRef(v){return typeof v==='string'&&v.indexOf('idb://')===0?'':v}
+function compressImageFile(file,maxSize=MEDIA_MAX,quality=MEDIA_QUALITY){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const scale=Math.min(1,maxSize/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));const ctx=c.getContext('2d',{alpha:false});ctx.drawImage(img,0,0,c.width,c.height);resolve(c.toDataURL('image/jpeg',quality))};img.onerror=reject;img.src=r.result};r.onerror=reject;r.readAsDataURL(file)})}
+function compressDataUrl(v,maxSize=MEDIA_MAX,quality=MEDIA_QUALITY){if(!isDataImage(v))return Promise.resolve(v||'');return new Promise(resolve=>{const img=new Image();img.onload=()=>{const scale=Math.min(1,maxSize/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));const ctx=c.getContext('2d',{alpha:false});ctx.drawImage(img,0,0,c.width,c.height);resolve(c.toDataURL('image/jpeg',quality))};img.onerror=()=>resolve(v);img.src=v})}
+async function compactValue(v){return isDataImage(v)?await compressDataUrl(v):String(v||'')}
+async function compactObjectImages(obj){if(!obj||typeof obj!=='object')return obj;if(Array.isArray(obj)){for(let i=0;i<obj.length;i++)obj[i]=await compactObjectImages(obj[i]);return obj}for(const k of Object.keys(obj)){if(typeof obj[k]==='string'&&obj[k].indexOf('idb://')===0)obj[k]='';else if(isDataImage(obj[k]))obj[k]=await compactValue(obj[k]);else if(obj[k]&&typeof obj[k]==='object')await compactObjectImages(obj[k])}return obj}
+function save(){try{localStorage.setItem(K,JSON.stringify(data));return true}catch(e){try{const slim=JSON.parse(JSON.stringify(data));if(slim.homeMedia){slim.homeMedia.slides=(slim.homeMedia.slides||[]).map(x=>isDataImage(x)?'':x);if(slim.homeMedia.games)Object.keys(slim.homeMedia.games).forEach(k=>{if(isDataImage(slim.homeMedia.games[k]))slim.homeMedia.games[k]=''});if(isDataImage(slim.homeMedia.featured))slim.homeMedia.featured='';if(Array.isArray(slim.homeMedia.customCategories))slim.homeMedia.customCategories=slim.homeMedia.customCategories.map(x=>({...x,image:isDataImage(x.image)?'':x.image}))}slim.customCategories=(slim.customCategories||[]).map(x=>({...x,image:isDataImage(x.image)?'':x.image}));slim.matches=(slim.matches||[]).map(x=>({...x,banner:isDataImage(x.banner)?'':x.banner}));localStorage.setItem(K,JSON.stringify(slim));data=slim;toast('Saved, but some oversized images were removed. Use smaller images.');return false}catch(e2){toast('Storage is full. Clear old GAMER ESPORTS site data and reopen.');return false}}}
+(async()=>{try{await compactObjectImages(data);save()}catch(e){}})();
+data.users=Array.isArray(data.users)?data.users:[];
+data.transactions=Array.isArray(data.transactions)?data.transactions:[];
+data.tournaments=Array.isArray(data.tournaments)?data.tournaments:[];
+data.announcements=Array.isArray(data.announcements)?data.announcements:[];
+data.settings=data.settings||{};data.staff=Array.isArray(data.staff)?data.staff:[];data.customCategories=Array.isArray(data.customCategories)?data.customCategories:[];
+save();
+const $=id=>document.getElementById(id);
+function ensureHomeMedia(){
+  data.homeMedia=data.homeMedia||{};
+  const m=data.homeMedia;
+  m.slides=Array.isArray(m.slides)?m.slides:[];
+  while(m.slides.length<3)m.slides.push('');
+  m.games=m.games||{};
+  m.featured=typeof m.featured==='string'?m.featured:'';
+  return m;
+}
+function toast(s){$('toast').textContent=s;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2200)}
+function nav(sec){if(document.getElementById('drawer')?.classList.contains('open'))document.getElementById('drawer').classList.remove('open');document.querySelectorAll('main>section').forEach(x=>x.classList.add('hidden'));$(sec).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.sec===sec));if(sec==='dashboard')renderDash();if(sec==='matches')renderMatches();if(sec==='players')renderPlayers();if(sec==='wallet')renderWallet();if(sec==='users')renderUsers();if(sec==='requests')renderRequests();if(sec==='staff')renderStaff();if(sec==='settings'){loadGateway();loadAppSettings();renderAnnouncements()}if(sec==='homeMedia')loadHomeMedia()}
+function toggleDrawer(){$('drawer').classList.toggle('open')}
+function closeModal(id){$(id).classList.remove('open')}
+function openModal(id){$(id).classList.add('open')}
+function renderDash(){let m=data.matches,p=data.players;let vals=[['Matches',m.length],['Upcoming',m.filter(x=>x.status==='Upcoming').length],['Ongoing',m.filter(x=>x.status==='Ongoing').length],['Users',data.users?.length||p.length]];$('stats').innerHTML=vals.map(v=>`<div class="stat"><span>${v[0]}</span><strong>${v[1]}</strong></div>`).join('');$('recent').innerHTML=m.length?`<div class="tablewrap"><table class="table"><tr><th>Match</th><th>Room</th><th>Status</th><th>Actions</th></tr>${m.slice().reverse().slice(0,6).map(matchRow).join('')}</table></div>`:'<div class="empty">No matches found</div>'}
+function setMatchFilter(f){filter=f;renderMatches()}
+function renderMatches(){let q=($('matchSearch')?.value||'').toLowerCase();let ms=data.matches.filter(m=>(filter==='All'||m.status===filter)&&[m.no,m.name,m.host,m.room].join(' ').toLowerCase().includes(q));$('matchTable').innerHTML=ms.length?`<div class="tablewrap"><table class="table"><tr><th>Match</th><th>Entry / Prize</th><th>Room</th><th>Status</th><th>Players</th><th>Actions</th></tr>${ms.map(m=>`<tr><td><b>#${m.no}</b><br><span class="muted">${m.name}</span></td><td>₹${m.entry}<br>₹${m.prize}</td><td>${m.room||'—'}</td><td><span class="badge ${m.status==='Completed'?'gray':''}">${m.status}</span></td><td>${m.players.length}/${m.max}</td><td>${matchActions(m)}</td></tr>`).join('')}</table></div>`:'<div class="empty">No matches found</div>'}
+function matchRow(m){return `<tr><td><b>#${m.no}</b><br>${m.name}</td><td>₹${m.entry}<br>₹${m.prize}</td><td>${m.room||'—'}</td><td><span class="badge">${m.status}</span></td><td>${matchActions(m)}</td></tr>`}
+function matchActions(m){return `<button class="btn" onclick="openEdit('${m.id}')">Edit</button> <button class="btn primary" onclick="openResult('${m.id}')">Result</button> <button class="btn danger" title="Delete Match" onclick="askDeleteMatch('${m.id}')">×</button>`}
+let deleteMatchId=null;
+function askDeleteMatch(id){
+  const m=(data.matches||[]).find(x=>String(x.id)===String(id));
+  if(!m)return;
+  deleteMatchId=m.id;
+  const n=document.getElementById('deleteMatchName');
+  const i=document.getElementById('deleteMatchInfo');
+  if(n)n.textContent='#'+(m.no||'')+' • '+(m.name||'Match');
+  if(i)i.textContent=(m.cat||'Battle Royale')+' • '+(m.status||'Upcoming')+' • '+(Array.isArray(m.players)?m.players.length:0)+' players';
+  openModal('deleteMatchModal');
+}
+function confirmDeleteMatch(){
+  if(!deleteMatchId)return;
+  const id=String(deleteMatchId);
+  data.matches=(data.matches||[]).filter(x=>String(x.id)!==id);
+  data.tournaments=(data.tournaments||[]).filter(x=>String(x.id)!==id);
+  data.joins=(data.joins||[]).filter(x=>String(x.tournamentId)!==id);
+  save();
+  deleteMatchId=null;
+  closeModal('deleteMatchModal');
+  renderDash();
+  renderMatches();
+  toast('Match deleted');
+}
+function deleteMatch(id){ askDeleteMatch(id); }
+
+function makeId(prefix='m'){
+  try{if(window.crypto&&crypto.randomUUID)return crypto.randomUUID();}
+  catch(e){}
+  return prefix+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,10);
+}
+function openMatch(){renderMatchCategoryOptions();editId=null;$('matchTitle').textContent='Create Match';['mno','mname','mhost','mroom','mpass','mbanner','mnotes','mplayers'].forEach(x=>$(x).value='');$('mcat').value='Battle Royale';$('mentry').value=15;$('mprize').value=100;$('mmax').value=48;$('mstatus').value='Upcoming';$('mno').value=String(Math.max(10101,...data.matches.map(x=>+x.no||10100))+1);openModal('matchModal')}
+function openEdit(id){renderMatchCategoryOptions();let m=data.matches.find(x=>x.id===id);editId=id;$('matchTitle').textContent='Edit Match';$('mno').value=m.no;$('mcat').value=m.cat;$('mname').value=m.name;$('mhost').value=m.host;$('mentry').value=m.entry;$('mprize').value=m.prize;$('mmax').value=m.max;$('mstatus').value=m.status;$('mroom').value=m.room;$('mpass').value=m.pass;$('mbanner').value=m.banner||'';$('mplayers').value=m.players.join('\n');$('mnotes').value=m.notes||'';openModal('matchModal')}
+async function saveMatch(){
+ let m={id:editId||makeId('m'),no:$('mno').value.trim(),cat:$('mcat').value,name:$('mname').value.trim(),host:$('mhost').value.trim(),entry:+$('mentry').value||0,prize:+$('mprize').value||0,max:+$('mmax').value||48,status:$('mstatus').value,room:$('mroom').value.trim(),pass:$('mpass').value.trim(),banner:$('mbanner').value.trim(),players:$('mplayers').value.split(/\n|,/).map(x=>x.trim()).filter(Boolean),notes:$('mnotes').value,results:editId?(data.matches.find(x=>x.id===editId)?.results||[]):[]};
+ if(!m.name)m.name='Free Fire Match';
+ m.banner=await compactValue(m.banner);
+ let ix=data.matches.findIndex(x=>x.id===m.id);
+ if(ix>=0)data.matches[ix]=m;else data.matches.push(m);
+
+ // Mirror the match into the User Panel tournament schema.
+ let ti=data.tournaments.findIndex(x=>x.id===m.id);
+ const t={id:m.id,title:m.name,name:m.name,mode:m.cat,category:m.cat,cat:m.cat,entryFee:m.entry,prizePool:m.prize,maxPlayers:m.max,players:m.players.length,status:String(m.status).toUpperCase(),time:m.time||'',roomId:m.room,password:m.pass,banner:m.banner||''};
+ if(ti>=0)data.tournaments[ti]={...data.tournaments[ti],...t};else data.tournaments.push(t);
+
+ save();closeModal('matchModal');renderDash();renderMatches();toast('Match saved • User Panel synced');
+}
+function resultParticipants(m){
+  const joins=Array.isArray(data.joins)?data.joins.filter(x=>String(x.tournamentId)===String(m.id)):[];
+  if(joins.length)return joins.slice().sort((a,b)=>Number(a.position||9999)-Number(b.position||9999)||Number(a.createdAt||0)-Number(b.createdAt||0)).map((j,i)=>({key:String(j.userId||j.uid||j.playerId||('join_'+i)),userId:j.userId||j.uid||'',playerId:j.playerId||'',name:j.inGameName||j.gameName||j.name||j.userId||('Player '+(i+1)),position:j.position||i+1}));
+  return (Array.isArray(m.players)?m.players:[]).map((x,i)=>{if(x&&typeof x==='object')return {key:String(x.userId||x.uid||x.playerId||x.id||('p_'+i)),userId:x.userId||x.uid||'',playerId:x.playerId||x.id||'',name:x.inGameName||x.gameName||x.name||x.username||('Player '+(i+1)),position:x.position||i+1};const p=(data.players||[]).find(y=>String(y.id)===String(x));return {key:String(x),userId:p?.userId||'',playerId:String(x),name:p?.name||String(x),position:i+1}});
+}
+function findResultUser(p){let u=(data.users||[]).find(x=>String(x.id||x.uid)===String(p.userId||''));if(!u&&p.playerId)u=(data.users||[]).find(x=>String(x.id||x.uid)===String(p.playerId));if(!u&&p.playerId)u=(data.players||[]).find(x=>String(x.id)===String(p.playerId));return u||null}
+function openResult(id){const m=data.matches.find(x=>String(x.id)===String(id));if(!m)return;resultId=m.id;const ps=resultParticipants(m),old=Object.fromEntries((m.results||[]).map(r=>[String(r.userId||r.playerId),r]));$('resultTitle').textContent='Result • #'+m.no;$('resultInfo').innerHTML='<div class="card"><b>'+esc(m.name)+'</b><br><span class="muted">Registered Players: '+ps.length+' • Prize Pool: ₹'+(m.prize||0)+' • Entry Fee: ₹'+(m.entry||0)+'</span></div>';$('resultRows').innerHTML=ps.length?ps.map((p,i)=>{const r=old[String(p.key)]||old[String(p.userId)]||old[String(p.playerId)]||{};return '<div class="resultrow"><div class="rank">#'+(i+1)+'</div><div><div class="playername">'+esc(p.name)+'</div><div class="playerid">'+esc(p.userId||p.playerId||'')+(p.position?' • Position #'+esc(p.position):'')+'</div></div><input class="input prizeinput" data-key="'+esc(p.key)+'" data-kind="prize" type="number" min="0" value="'+(r.prize??0)+'" placeholder="Prize ₹"><input class="input prizeinput" data-key="'+esc(p.key)+'" data-kind="refund" type="number" min="0" value="'+(r.refund??0)+'" placeholder="Refund ₹"></div>';}).join(''):'<div class="empty">No registered players yet. Result can be published after players join.</div>';openModal('resultModal')}
+function setAllRefunds(){const m=data.matches.find(x=>String(x.id)===String(resultId));if(m)document.querySelectorAll('#resultRows input[data-kind="refund"]').forEach(e=>e.value=m.entry||0)}
+function clearAllRefunds(){document.querySelectorAll('#resultRows input[data-kind="refund"]').forEach(e=>e.value=0)}
+function publishResult(){const m=data.matches.find(x=>String(x.id)===String(resultId));if(!m)return;const ps=resultParticipants(m),old=Object.fromEntries((m.results||[]).map(r=>[String(r.userId||r.playerId),r]));const inputs=[...document.querySelectorAll('#resultRows input.prizeinput')];const rows=ps.map((p,i)=>{const pr=inputs.find(e=>String(e.dataset.key)===String(p.key)&&e.dataset.kind==='prize'),rf=inputs.find(e=>String(e.dataset.key)===String(p.key)&&e.dataset.kind==='refund');return{rank:i+1,userId:p.userId||'',playerId:p.playerId||'',inGameName:p.name,position:p.position,prize:Number(pr?.value||0),refund:Number(rf?.value||0)}});rows.forEach(r=>{const prev=old[String(r.userId||r.playerId)]||{prize:0,refund:0},delta=(r.prize-prev.prize)+(r.refund-prev.refund),u=findResultUser(r);if(u&&delta){u.balance=Number(u.balance??u.wallet??0)+delta;if('wallet' in u)u.wallet=u.balance}});m.results=rows;m.status='Completed';const t=(data.tournaments||[]).find(x=>String(x.id)===String(m.id));if(t){t.results=rows;t.status='COMPLETED'}save();closeModal('resultModal');renderDash();renderMatches();toast('Result published • prizes & refunds credited')}
+
+function loadHomeMedia(){
+  const m=ensureHomeMedia();
+  ['slide1','slide2','slide3'].forEach((x,i)=>{
+    $(x+'Url').value=m.slides[i]||'';
+    const p=$(x+'Preview');
+    if(m.slides[i]){p.src=m.slides[i];p.style.display='block'}else{p.removeAttribute('src');p.style.display='none'}
+  });
+  [['game1','battleRoyale'],['game2','clashSquad'],['game3','loneWolf'],['game4','custom']].forEach(([id,key])=>{
+    $(id+'Url').value=m.games[key]||'';
+    const p=$(id+'Preview');
+    if(m.games[key]){p.src=m.games[key];p.style.display='block'}else{p.removeAttribute('src');p.style.display='none'}
+  });
+  $('featuredUrl').value=m.featured||'';
+  if(m.featured){$('featuredPreview').src=m.featured;$('featuredPreview').style.display='block'}else{$('featuredPreview').removeAttribute('src');$('featuredPreview').style.display='none'}
+}
+function resizeImageFile(file,maxSize=900,quality=.78){
+  return new Promise((resolve,reject)=>{
+    const r=new FileReader();
+    r.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{
+        const scale=Math.min(1,maxSize/Math.max(img.width,img.height));
+        const c=document.createElement('canvas');
+        c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+        resolve(c.toDataURL('image/jpeg',quality));
+      };
+      img.onerror=reject;img.src=r.result;
+    };
+    r.onerror=reject;r.readAsDataURL(file);
+  });
+}
+async function previewMediaFile(input,previewId,urlId){
+  if(!input.files||!input.files[0])return;
+  try{const src=await compressImageFile(input.files[0]);$(urlId).value=src;$(previewId).src=src;$(previewId).style.display='block'}catch(e){alert('Image could not be loaded')}}
+
+async function saveHomeMedia(){
+  const m=ensureHomeMedia();
+  m.slides=await Promise.all([$('slide1Url').value.trim(),$('slide2Url').value.trim(),$('slide3Url').value.trim()].map(compactValue));
+  m.games={battleRoyale:await compactValue($('game1Url').value.trim()),clashSquad:await compactValue($('game2Url').value.trim()),loneWolf:await compactValue($('game3Url').value.trim()),custom:await compactValue($('game4Url').value.trim())};
+  m.featured=await compactValue($('featuredUrl').value.trim());data.homeMedia=m;save();toast('User Panel home images updated');
+}
+
+function loadGateway(){let g=data.gateway||{};$('gateway').value=g.gateway||'Razorpay';$('gmode').value=g.mode||'Test';$('gkey').value=g.key||'';$('gsecret').value=g.secret||''}
+function saveGateway(){data.gateway={gateway:$('gateway').value,mode:$('gmode').value,key:$('gkey').value,secret:$('gsecret').value};save();toast('Gateway settings saved')}
+
+function ensureUserRecord(u){
+  data.users=Array.isArray(data.users)?data.users:[];
+  let key=String(u.id||u.uid||u.mobile||u.phone||u.username||'');
+  let x=data.users.find(v=>String(v.id||v.uid||v.mobile||v.phone||v.username||'')===key);
+  if(!x){x={id:u.id||('u_'+Date.now()),name:u.name||u.username||'Player',mobile:u.mobile||u.phone||'',username:u.username||'',balance:Number(u.balance||0),createdAt:u.createdAt||Date.now()};data.users.push(x)}
+  return x;
+}
+function getUserLabel(tx){
+  const uid=tx.userId||tx.uid||tx.mobile||tx.phone||'';
+  const u=data.users.find(x=>String(x.id||x.uid||x.mobile||x.phone)===String(uid));
+  return u?(u.name||u.username||u.mobile||'User'):(tx.username||tx.user||'Unlinked User');
+}
+function renderUsers(){
+ const q=($('userSearch')?.value||'').toLowerCase();
+ const users=data.users.filter(u=>[u.name,u.username,u.mobile,u.phone,u.id].join(' ').toLowerCase().includes(q));
+ $('userTable').innerHTML=users.length?`<div class="tablewrap"><table class="table"><tr><th>User</th><th>Mobile</th><th>Balance</th><th>Status</th><th>Actions</th></tr>${users.map(u=>`<tr>
+ <td><b>${esc(u.name||u.username||'Player')}</b><br><span class="muted">@${esc(u.username||'—')}</span></td>
+ <td>${esc(u.mobile||u.phone||'—')}</td><td><b>₹${Number(u.balance||0).toFixed(2)}</b></td>
+ <td><span class="badge ${u.banned?'red':''}">${u.banned?'Banned':'Active'}</span></td>
+ <td class="miniActions"><button class="btn" onclick="userWallet('${esc(u.id)}',1)">+ ₹</button><button class="btn" onclick="userWallet('${esc(u.id)}',-1)">− ₹</button><button class="btn danger" onclick="toggleBan('${esc(u.id)}')">${u.banned?'Unban':'Ban'}</button></td>
+ </tr>`).join('')}</table></div>`:'<div class="empty">No registered users found.</div>';
+}
+function userWallet(id,sign){
+ const u=data.users.find(x=>String(x.id)===String(id)); if(!u)return;
+ const a=Number(prompt(sign>0?'Amount to add':'Amount to subtract','100'));
+ if(!a||a<=0)return;
+ u.balance=Math.max(0,(Number(u.balance)||0)+sign*a);
+ syncAuthUserBalance(u); save(); renderUsers(); renderWallet(); toast('User wallet updated');
+}
+function syncAuthUserBalance(u){
+ try{
+  const users=JSON.parse(localStorage.getItem('ge_users_v1')||'[]');
+  const i=users.findIndex(x=>String(x.id)===String(u.id)||String(x.mobile||'')===String(u.mobile||''));
+  if(i>=0){users[i].balance=u.balance;users[i].name=u.name||users[i].name;localStorage.setItem('ge_users_v1',JSON.stringify(users))}
+  const s=JSON.parse(localStorage.getItem('ge_user_session_v1')||'null');
+  if(s&&(String(s.id)===String(u.id)||String(s.mobile||'')===String(u.mobile||''))){s.balance=u.balance;localStorage.setItem('ge_user_session_v1',JSON.stringify(s))}
+ }catch(e){}
+}
+function toggleBan(id){const u=data.users.find(x=>String(x.id)===String(id));if(!u)return;u.banned=!u.banned;save();renderUsers();toast(u.banned?'User banned':'User unbanned')}
+function txUser(tx){const uid=tx.userId||tx.uid||tx.mobile||tx.phone;return data.users.find(u=>String(u.id||u.uid||u.mobile||u.phone)===String(uid))}
+function approveTransaction(index){
+ const tx=data.transactions[index]; if(!tx||tx.status!=='pending')return;
+ const u=txUser(tx);
+ if(!u)return alert('This request is not linked to a user account. Add userId/mobile to the request first.');
+ const amount=Math.abs(Number(tx.amount)||0);
+ if(tx.type==='deposit')u.balance=(Number(u.balance)||0)+amount;
+ if(tx.type==='withdraw'){
+   if(amount>(Number(u.balance)||0))return alert('User has insufficient balance.');
+   u.balance=(Number(u.balance)||0)-amount;
+ }
+ tx.status='approved';tx.approvedAt=Date.now();tx.userId=u.id;syncAuthUserBalance(u);save();renderRequests();renderUsers();renderWallet();toast('Request approved');
+}
+function rejectTransaction(index){const tx=data.transactions[index];if(!tx||tx.status!=='pending')return;tx.status='rejected';tx.rejectedAt=Date.now();save();renderRequests();toast('Request rejected')}
+function requestHTML(tx,index){
+ const amt=Math.abs(Number(tx.amount)||0), incoming=tx.type==='deposit';
+ return `<div class="request"><div><div class="requestTitle">${esc(tx.title||(`${tx.type} request`))}</div><div class="requestMeta">${esc(getUserLabel(tx))} • ${new Date(tx.createdAt||Date.now()).toLocaleString()}</div><span class="pill">${esc(tx.status||'pending')}</span></div><div><div class="requestAmount ${incoming?'in':'out'}">${incoming?'+':'−'}₹${amt.toFixed(2)}</div>${tx.status==='pending'?`<div class="miniActions"><button class="btn success" onclick="approveTransaction(${index})">Approve</button><button class="btn danger" onclick="rejectTransaction(${index})">Reject</button></div>`:''}</div></div>`;
+}
+function renderRequests(){
+ const txs=data.transactions||[];
+ const dep=txs.filter(x=>x.type==='deposit'&&x.status==='pending'),wd=txs.filter(x=>x.type==='withdraw'&&x.status==='pending');
+ $('pendingDeposits').textContent=dep.length;$('pendingWithdrawals').textContent=wd.length;
+ const allDep=txs.filter(x=>x.type==='deposit').slice().reverse(),allWd=txs.filter(x=>x.type==='withdraw').slice().reverse();
+ $('depositRequests').innerHTML=allDep.length?allDep.map((x)=>requestHTML(x,txs.indexOf(x))).join(''):'<div class="empty">No deposit requests.</div>';
+ $('withdrawRequests').innerHTML=allWd.length?allWd.map((x)=>requestHTML(x,txs.indexOf(x))).join(''):'<div class="empty">No withdrawal requests.</div>';
+}
+function loadAppSettings(){
+ const s=data.settings||{};
+ $('telegram').value=s.telegram||'';$('whatsapp').value=s.whatsapp||'';$('appName').value=s.appName||'GAMER ESPORTS';$('supportMsg').value=s.supportMsg||'';
+}
+function saveAppSettings(){
+ data.settings=data.settings||{};
+ data.settings.telegram=$('telegram').value.trim();data.settings.whatsapp=$('whatsapp').value.trim();data.settings.appName=$('appName').value.trim()||'GAMER ESPORTS';data.settings.supportMsg=$('supportMsg').value.trim();
+ save();toast('App settings synced to User Panel');
+}
+function addAnnouncement(){
+ const text=$('announcementText').value.trim();if(!text)return alert('Write an announcement first');
+ data.announcements=data.announcements||[];data.announcements.unshift({id:crypto.randomUUID(),text,createdAt:Date.now()});
+ save();$('announcementText').value='';renderAnnouncements();toast('Announcement published');
+}
+function deleteAnnouncement(id){data.announcements=(data.announcements||[]).filter(x=>x.id!==id);save();renderAnnouncements()}
+function renderAnnouncements(){
+ const a=data.announcements||[];
+ $('announcementList').innerHTML=a.length?'<div class="annList">'+a.map(x=>`<div class="annItem"><b>${esc(x.text||x.message||'')}</b><div class="requestMeta">${new Date(x.createdAt||Date.now()).toLocaleString()} <button class="btn danger" style="float:right;padding:6px 9px" onclick="deleteAnnouncement('${esc(x.id)}')">Delete</button></div></div>`).join('')+'</div>':'<div class="empty">No announcements yet.</div>';
+}
+
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+function logout(){if(confirm('Logout from Admin Panel?')){sessionStorage.removeItem('ge_admin_session');toast('Admin logged out')}}
+renderDash();
+
+// ===== Automatic Match Generator =====
+let autoTimer = null;
+
+function autoId(){
+  if(window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'auto_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,10);
+}
+function loadAutoSettings(){
+  data.autoMatches = data.autoMatches || {enabled:false,count:5,interval:30,startTime:'10:00',cat:'Battle Royale',name:'Auto Battle Royale Match',host:'Auto Host',entry:15,prize:100,max:48};
+  $('autoEnabled').value = data.autoMatches.enabled ? 'yes' : 'no';
+  $('autoCount').value = data.autoMatches.count;
+  $('autoInterval').value = data.autoMatches.interval;
+  $('autoStartTime').value = data.autoMatches.startTime || '10:00';
+  $('autoCat').value = data.autoMatches.cat;
+  $('autoName').value = data.autoMatches.name;
+  $('autoHost').value = data.autoMatches.host;
+  $('autoEntry').value = data.autoMatches.entry;
+  $('autoPrize').value = data.autoMatches.prize;
+  $('autoMax').value = data.autoMatches.max;
+  updateAutoStatus();
+}
+function saveAutoSettings(show=true){
+  data.autoMatches = {
+    enabled: $('autoEnabled').value === 'yes',
+    count: Math.max(1, Math.min(50, Number($('autoCount').value)||5)),
+    interval: Math.max(1, Number($('autoInterval').value)||30),
+    startTime: $('autoStartTime').value || '10:00',
+    cat: $('autoCat').value,
+    name: ($('autoName').value||'Auto Battle Royale Match').trim(),
+    host: ($('autoHost').value||'Auto Host').trim(),
+    entry: Math.max(0, Number($('autoEntry').value)||0),
+    prize: Math.max(0, Number($('autoPrize').value)||0),
+    max: Math.max(1, Number($('autoMax').value)||48)
+  };
+  save();
+  startAutoMatches();
+  updateAutoStatus();
+  if(show) toast(data.autoMatches.enabled ? 'Automatic matches enabled' : 'Automatic matches saved as OFF');
+}
+function nextMatchNumber(){
+  const nums = (data.matches||[]).map(m=>Number(m.no)||0);
+  return Math.max(10100,...nums)+1;
+}
+function autoTimeLabel(totalMinutes){
+  totalMinutes=((totalMinutes%1440)+1440)%1440;
+  const h=Math.floor(totalMinutes/60), m=totalMinutes%60;
+  const ap=h>=12?'PM':'AM';
+  const hh=(h%12)||12;
+  return String(hh).padStart(2,'0')+':'+String(m).padStart(2,'0')+' '+ap;
+}
+function generateAutoMatches(){
+  saveAutoSettings(false);
+  const cfg=data.autoMatches;
+  const count=cfg.count;
+  data.matches=data.matches||[];
+  let n=nextMatchNumber();
+  const now=Date.now();
+  const parts=String(cfg.startTime||'10:00').split(':');
+  const startMin=(Number(parts[0])||10)*60+(Number(parts[1])||0);
+  const gap=Math.max(1,Number(cfg.interval)||30);
+  for(let i=0;i<count;i++){
+    const matchTime=autoTimeLabel(startMin+(i*gap));
+    data.matches.push({
+      id:autoId(),
+      no:String(n++),
+      cat:cfg.cat,
+      category:cfg.cat,
+      name:cfg.name+' #'+(i+1),
+      host:cfg.host,
+      entry:cfg.entry,
+      prize:cfg.prize,
+      max:cfg.max,
+      room:'',
+      pass:'',
+      time:matchTime,
+      status:'Upcoming',
+      players:[],
+      notes:"",
+      results:[],
+      createdAt:now+i
+    });
+  }
+  save();
+  if(typeof renderMatches==='function') renderMatches();
+  if(typeof renderDash==='function') renderDash();
+  toast(count+' automatic match'+(count===1?'':'es')+' added with '+gap+' minute gaps');
+}
+function stopAutoMatches(){
+  if(autoTimer){clearInterval(autoTimer);autoTimer=null;}
+  data.autoMatches=data.autoMatches||{};
+  data.autoMatches.enabled=false;
+  if($('autoEnabled')) $('autoEnabled').value='no';
+  save();
+  updateAutoStatus();
+  toast('Automatic matches stopped');
+}
+function startAutoMatches(){
+  if(autoTimer){clearInterval(autoTimer);autoTimer=null;}
+  if(!data.autoMatches || !data.autoMatches.enabled) return;
+  const ms=Math.max(1, Number(data.autoMatches.interval)||30)*60*1000;
+  autoTimer=setInterval(generateAutoMatches, ms);
+}
+function updateAutoStatus(){
+  const el=$('autoStatus');
+  if(!el || !data.autoMatches) return;
+  el.innerHTML=data.autoMatches.enabled
+    ? '🟢 Automatic generation is ON • '+data.autoMatches.count+' matches every '+data.autoMatches.interval+' minutes.'
+    : '⚪ Automatic generation is OFF.';
+}
+
+// Restore scheduler after the existing data initialization.
+setTimeout(function(){
+  data.autoMatches=data.autoMatches||{enabled:false,count:5,interval:30,startTime:'10:00',cat:'Battle Royale',name:'Auto Battle Royale Match',host:'Auto Host',entry:15,prize:100,max:48};
+  startAutoMatches();
+}, 100);
+
+
+// ===== Category image upload/save =====
+async function previewCategoryImage(input, previewId, urlId){
+  const file=input.files&&input.files[0];if(!file)return;
+  const preview=document.getElementById(previewId),url=document.getElementById(urlId);
+  if(!file.type.startsWith('image/')){toast('Please select an image');input.value='';return}
+  try{const src=await compressImageFile(file);url.value=src;preview.src=src;preview.style.display='block'}catch(e){toast('Image could not be loaded')}
+}
+async function saveCategoryImages(){
+  data.homeMedia=data.homeMedia||{};data.homeMedia.games=data.homeMedia.games||{};
+  const vals={br:document.getElementById('game1Url')?.value.trim()||'',clash:document.getElementById('game2Url')?.value.trim()||'',lone:document.getElementById('game3Url')?.value.trim()||'',custom:document.getElementById('game4Url')?.value.trim()||''};
+  for(const k of Object.keys(vals))if(vals[k])data.homeMedia.games[k]=await compactValue(vals[k]);
+  save();loadCategoryImages();toast('Category images saved');
+}
+
+function loadCategoryImages(){
+  const g=(data.homeMedia&&data.homeMedia.games)||{};
+  const map={br:['game1Url','game1Preview'],clash:['game2Url','game2Preview'],lone:['game3Url','game3Preview'],custom:['game4Url','game4Preview']};
+  Object.keys(map).forEach(k=>{
+    const v=g[k]||'', url=document.getElementById(map[k][0]), img=document.getElementById(map[k][1]);
+    if(url) url.value=v;
+    if(img){ img.src=v; img.style.display=v?'block':'none'; }
+  });
+}
+
+
+function addStaff(){
+  const username=(document.getElementById('suser')?.value||'').trim();
+  const password=document.getElementById('spass')?.value||'';
+  const name=(document.getElementById('sname')?.value||'').trim();
+  if(!username||!password||!name){toast('Enter staff username, password and name');return;}
+  data.staff=Array.isArray(data.staff)?data.staff:[];
+  if(data.staff.some(x=>String(x.username||'').toLowerCase()===username.toLowerCase())){toast('Staff username already exists');return;}
+  data.staff.push({id:makeId('staff'),username,password,name,role:'Staff',createdAt:Date.now(),active:true});
+  save();
+  document.getElementById('suser').value='';document.getElementById('spass').value='';document.getElementById('sname').value='';
+  renderStaff();toast('Staff added');
+}
+function renderStaff(){
+  const box=document.getElementById('staffTable'); if(!box)return;
+  data.staff=Array.isArray(data.staff)?data.staff:[];
+  box.innerHTML=data.staff.length?'<div class="tablewrap"><table class="table"><tr><th>Name</th><th>Username</th><th>Status</th><th>Action</th></tr>'+data.staff.map(x=>'<tr><td><b>'+escapeHtml(x.name||'Staff')+'</b></td><td>'+escapeHtml(x.username||'—')+'</td><td><span class="badge">'+(x.active===false?'Inactive':'Active')+'</span></td><td><button class="btn danger" onclick="deleteStaff(\''+String(x.id).replace(/'/g,'')+'\')">×</button></td></tr>').join('')+'</table></div>':'<div class="empty">No staff accounts yet.</div>';
+}
+function deleteStaff(id){
+  if(!confirm('Delete this staff account?'))return;
+  data.staff=(data.staff||[]).filter(x=>String(x.id)!==String(id));save();renderStaff();toast('Staff deleted');
+}
+
+function getCustomCategories(){
+  data.customCategories=Array.isArray(data.customCategories)?data.customCategories:[];
+  return data.customCategories;
+}
+async function previewNewCategoryImage(input){
+  const file=input.files&&input.files[0];if(!file)return;if(!file.type.startsWith('image/')){toast('Please select an image');input.value='';return}
+  try{const src=await compressImageFile(file);document.getElementById('newCategoryImageUrl').value=src;const p=document.getElementById('newCategoryImagePreview');p.src=src;p.style.display='block'}catch(e){toast('Image could not be loaded')}
+}
+async function addCustomCategory(){
+  const name=(document.getElementById('newCategoryName')?.value||'').trim();let image=(document.getElementById('newCategoryImageUrl')?.value||'').trim();if(!name){toast('Enter category name');return}
+  const cats=getCustomCategories();if(cats.some(c=>String(c.name).toLowerCase()===name.toLowerCase())){toast('Category already exists');return}
+  image=await compactValue(image);const catObj={id:'cat_'+Date.now(),name,image};cats.push(catObj);data.homeMedia=data.homeMedia||{};data.homeMedia.games=data.homeMedia.games||{};data.homeMedia.customCategories=data.homeMedia.customCategories||[];data.homeMedia.customCategories=data.homeMedia.customCategories.filter(c=>String(c.name).toLowerCase()!==name.toLowerCase());data.homeMedia.customCategories.push({id:catObj.id,name:catObj.name,image:catObj.image});save();renderCustomCategories();renderMatchCategoryOptions();document.getElementById('newCategoryName').value='';document.getElementById('newCategoryImageUrl').value='';document.getElementById('newCategoryImageFile').value='';document.getElementById('newCategoryImagePreview').style.display='none';toast('Category added');
+}
+
+function deleteCustomCategory(id){
+  id=String(id||'').trim();
+  let fresh={};
+  try{fresh=JSON.parse(localStorage.getItem(K)||'{}')}catch(e){fresh={}}
+  if(!fresh||typeof fresh!=='object'){toast('Storage data not found');return}
+
+  fresh.customCategories=Array.isArray(fresh.customCategories)?fresh.customCategories:[];
+  fresh.homeMedia=(fresh.homeMedia&&typeof fresh.homeMedia==='object')?fresh.homeMedia:{};
+  fresh.homeMedia.customCategories=Array.isArray(fresh.homeMedia.customCategories)?fresh.homeMedia.customCategories:[];
+
+  // Search ALL category stores used by old/new versions.
+  let registry=[];
+  try{const r=JSON.parse(localStorage.getItem('ge_categories_v1')||'[]'); if(Array.isArray(r)) registry=r}catch(e){}
+
+  let target=fresh.customCategories.find(c=>String(c.id)===id)
+    || fresh.homeMedia.customCategories.find(c=>String(c.id)===id)
+    || registry.find(c=>String(c.id)===id);
+
+  // Also allow deletion when the old version used the category name as the key/id.
+  if(!target){
+    target=fresh.customCategories.find(c=>String(c.name||'').trim().toLowerCase()===id.toLowerCase())
+      || fresh.homeMedia.customCategories.find(c=>String(c.name||'').trim().toLowerCase()===id.toLowerCase())
+      || registry.find(c=>String(c.name||'').trim().toLowerCase()===id.toLowerCase());
+  }
+
+  // Last fallback: identify the exact clicked card.
+  if(!target){
+    const btn=document.querySelector('button[data-delete-category-id="'+CSS.escape(id)+'"]');
+    const card=btn?btn.closest('[data-category-name]'):null;
+    const nm=card?String(card.getAttribute('data-category-name')||'').trim().toLowerCase():'';
+    if(nm) target=fresh.customCategories.find(c=>String(c.name||'').trim().toLowerCase()===nm)
+      || fresh.homeMedia.customCategories.find(c=>String(c.name||'').trim().toLowerCase()===nm)
+      || registry.find(c=>String(c.name||'').trim().toLowerCase()===nm);
+  }
+
+  if(!target){toast('Category not found');return}
+  const targetId=String(target.id||id).trim();
+  const targetName=String(target.name||'').trim().toLowerCase();
+  if(!confirm('Delete category "'+String(target.name||'this category')+'"?'))return;
+
+  const keep=(c)=>String(c.id||'').trim()!==targetId && String(c.name||'').trim().toLowerCase()!==targetName;
+  fresh.customCategories=fresh.customCategories.filter(keep);
+  fresh.homeMedia.customCategories=fresh.homeMedia.customCategories.filter(keep);
+
+  // Remove legacy category registry entry too — this was the missing part that
+  // made deleted categories come back in the User Panel.
+  registry=registry.filter(keep);
+
+  if(fresh.homeMedia.games&&typeof fresh.homeMedia.games==='object'){
+    Object.keys(fresh.homeMedia.games).forEach(k=>{
+      if(String(k).trim()===targetId || String(k).trim().toLowerCase()===targetName) delete fresh.homeMedia.games[k];
+    });
+  }
+
+  try{
+    localStorage.setItem(K,JSON.stringify(fresh));
+    localStorage.setItem('ge_categories_v1',JSON.stringify(registry));
+    data=fresh;
+    data.users=Array.isArray(data.users)?data.users:[];
+    data.transactions=Array.isArray(data.transactions)?data.transactions:[];
+    data.tournaments=Array.isArray(data.tournaments)?data.tournaments:[];
+    data.announcements=Array.isArray(data.announcements)?data.announcements:[];
+    data.settings=data.settings||{};
+    data.staff=Array.isArray(data.staff)?data.staff:[];
+    renderCustomCategories();
+    renderMatchCategoryOptions();
+    if(typeof render==='function')render();
+    toast('Category deleted successfully');
+  }catch(e){toast('Delete failed: browser storage is full');}
+}
+function renderCustomCategories(){
+  const box=document.getElementById('customCategoryList'); if(!box)return;
+  const cats=getCustomCategories();
+  box.innerHTML=cats.length?cats.map(c=>{
+    const cid=escapeHtml(String(c.id||''));
+    const cname=escapeHtml(String(c.name||''));
+    return '<div class="card" data-category-id="'+cid+'" data-category-name="'+cname+'" style="display:flex;align-items:center;gap:12px;margin:8px 0">'+
+      (c.image?'<img src="'+c.image+'" style="width:58px;height:58px;object-fit:cover;border-radius:10px">':'')+
+      '<div style="flex:1"><b>'+cname+'</b><div class="muted">Custom category</div></div>'+
+      '<button type="button" class="btn danger" data-delete-category-id="'+cid+'" onclick="deleteCustomCategory(this.dataset.deleteCategoryId)">×</button></div>';
+  }).join(''):'<div class="muted">No custom categories yet.</div>';
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function renderMatchCategoryOptions(){
+  const el=document.getElementById('mcat'); if(!el)return;
+  const base=['Battle Royale','Clash Squad','Lone Wolf','Custom'];
+  const names=getCustomCategories().map(c=>c.name);
+  const current=el.value;
+  el.innerHTML=base.concat(names).filter((v,i,a)=>a.indexOf(v)===i).map(v=>'<option value="'+escapeHtml(v)+'">'+escapeHtml(v)+'</option>').join('');
+  if(Array.from(el.options).some(o=>o.value===current))el.value=current;
+}
+
+</script></body></html>
